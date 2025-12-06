@@ -314,7 +314,6 @@ const removeTrack = (index) => {
   }
 }
 
-// 初始化加载数据
 onMounted(() => {
   loadData('cats')
 })
@@ -338,7 +337,6 @@ onMounted(() => {
   margin-bottom: 15px;
 }
 
-/* 轨迹样式 */
 .track-item {
   margin: 6px 0;
   line-height: 1.5;
@@ -366,7 +364,6 @@ onMounted(() => {
   padding: 6px 0;
 }
 
-/* 编辑轨迹样式 */
 .track-editor {
   display: flex;
   align-items: center;

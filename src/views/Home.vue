@@ -130,14 +130,13 @@
 import { ref, onMounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import { House, UserFilled, StarFilled, Document } from '@element-plus/icons-vue'
-import { get } from '@/utils/request' // 使用封装的请求函数
+import { get } from '@/utils/request'
 
 const noticeList = ref([])
 const currentFinancialData = ref(null)
 const financialChartRef = ref(null)
 let financialChartInstance = null
 
-// 格式化时间
 const formatTime = (timeStr) => {
   try {
     const date = new Date(timeStr)
@@ -147,14 +146,12 @@ const formatTime = (timeStr) => {
   }
 }
 
-// 内容截断过滤器
 const ellipsis = (str, length) => {
   if (!str) return ''
   if (str.length <= length) return str
   return str.slice(0, length) + '...'
 }
 
-// 获取公告数据 - 调用mock API
 const getNoticeData = async () => {
   try {
     const response = await get('/notice') // 调用 /api/notice
@@ -169,32 +166,26 @@ const getNoticeData = async () => {
   }
 }
 
-// 获取财务数据 - 调用mock API
 const getFinancialData = async () => {
   try {
     const currentMonth = '2025-06'
     
-    // 获取收入数据
     const incomeResponse = await get('/financial/income', { month: currentMonth })
     let monthlyIncome = []
     if (incomeResponse && incomeResponse.data) {
       monthlyIncome = incomeResponse.data
     }
 
-    // 获取支出数据
     const expenseResponse = await get('/financial/expense', { month: currentMonth })
     let monthlyExpense = []
     if (expenseResponse && expenseResponse.data) {
       monthlyExpense = expenseResponse.data
     }
 
-    // 计算总收入
     const totalIncome = monthlyIncome.reduce((sum, item) => sum + item.value, 0)
     
-    // 计算总支出
     const totalExpense = monthlyExpense.reduce((sum, item) => sum + item.value, 0)
     
-    // 组装财务数据
     currentFinancialData.value = {
       totalIncome,
       totalExpense,
@@ -203,7 +194,6 @@ const getFinancialData = async () => {
       expenseDetails: monthlyExpense
     }
     
-    // 更新图表
     nextTick(() => {
       updateFinancialChart(monthlyIncome)
     })
@@ -213,7 +203,6 @@ const getFinancialData = async () => {
   }
 }
 
-// 更新财务图表
 const updateFinancialChart = (data) => {
   if (!financialChartInstance && financialChartRef.value) {
     financialChartInstance = echarts.init(financialChartRef.value)
@@ -272,14 +261,12 @@ const updateFinancialChart = (data) => {
   }
 }
 
-// 处理窗口大小变化
 const handleResize = () => {
   if (financialChartInstance) {
     financialChartInstance.resize()
   }
 }
 
-// 初始化
 onMounted(async () => {
   await Promise.all([
     getNoticeData(),
@@ -296,7 +283,7 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
 }
 
 .image-container {
@@ -313,91 +300,73 @@ onMounted(async () => {
 
 .cards-nav {
   position: absolute;
-  left: 50px;
+  left: 20px;
+  right: 20px;
   top: 20px;
   z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }
 
 .cards-row {
   display: flex;
-  gap: 20px;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-bottom: 10px;
 }
 
 .nav-card {
   text-decoration: none;
-  width: 280px;
-  height: 120px;
+  width: calc((100% - 2 * 10px) / 3);
+  height: 100px;
   border-radius: 8px;
-  padding: 15px 20px;
+  padding: 12px;
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
   color: white;
-  transition: transform 0.3s;
+  background-color: #47bee25d;
   position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.nav-card:nth-child(2) {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.nav-card:nth-child(3) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.nav-card:nth-child(4) {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
-
-.nav-card:nth-child(5) {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  transition: all 0.3s;
+  box-sizing: border-box; /* 确保padding不改变宽度 */
 }
 
 .nav-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .card-icon {
-  flex-shrink: 0;
-  font-size: 48px; 
+  font-size: 24px;
   opacity: 0.9;
 }
 
 .card-text {
-  font-size: 1.2rem;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: normal;
+  word-break: break-all;
+  overflow: hidden;
 }
 
 .card-arrow {
   position: absolute;
-  right: 20px;
-  font-size: 1.5rem;
+  right: 10px;
+  bottom: 10px;
+  font-size: 16px;
   opacity: 0.8;
-  transition: transform 0.3s;
-}
-
-.nav-card:hover .card-arrow {
-  transform: translateX(5px);
 }
 
 .show {
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  margin-top: 150px;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  margin-top: 120px;
 }
 
 .notice, .charts {
-  flex: 1;
-  min-width: 300px;
+  width: 100%;
 }
 
 .notice-content {
@@ -499,36 +468,200 @@ onMounted(async () => {
   height: 100%;
 }
 
-/* 响应式调整 */
 @media (max-width: 768px) {
-  .show {
-    flex-direction: column;
+  .image-container {
+    height: 350px;
   }
   
   .cards-nav {
-    left: 20px;
-    right: 20px;
+    left: 15px;
+    right: 15px;
+    top: 15px;
   }
   
   .cards-row {
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
   }
   
   .nav-card {
-    width: calc(50% - 10px);
-    height: 100px;
+    width: calc((100% - 2 * 8px) / 3);
+    height: 85px;
+    padding: 10px;
+  }
+  
+  .card-icon {
+    font-size: 22px;
+  }
+  
+  .card-text {
+    font-size: 13px;
+  }
+  
+  .show {
+    margin-top: 110px;
+    padding: 12px;
   }
   
   .financial-stats {
     flex-direction: column;
     gap: 15px;
   }
+  
+  .chart-container {
+    height: 280px;
+  }
 }
 
 @media (max-width: 480px) {
-  .nav-card {
-    width: 100%;
+  .image-container {
+    height: 300px;
   }
+  
+  .cards-nav {
+    left: 10px;
+    right: 10px;
+    top: 10px;
+  }
+  
+  .cards-row {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  
+  .nav-card {
+    width: calc((100% - 2 * 6px) / 3);
+    height: 75px;
+    padding: 8px;
+  }
+  
+  .card-icon {
+    font-size: 20px;
+  }
+  
+  .card-text {
+    font-size: 12px;
+  }
+  
+  .card-arrow {
+    font-size: 14px;
+    right: 8px;
+    bottom: 8px;
+  }
+  
+  .show {
+    margin-top: 100px;
+    padding: 10px;
+    gap: 12px;
+  }
+  
+  .notice-title {
+    font-size: 15px;
+  }
+  
+  .notice-brief {
+    font-size: 13px;
+  }
+  
+  .stat-label {
+    font-size: 13px;
+  }
+  
+  .stat-value {
+    font-size: 16px;
+  }
+  
+  .chart-container {
+    height: 260px;
+  }
+}
+
+@media (max-width: 375px) {
+  .image-container {
+    height: 250px;
+  }
+  
+  .cards-row {
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .nav-card {
+    width: calc((100% - 2 * 5px) / 3);
+    height: 70px;
+    padding: 6px;
+  }
+  
+  .card-icon {
+    font-size: 18px;
+  }
+  
+  .card-text {
+    font-size: 11px;
+  }
+  
+  .card-arrow {
+    font-size: 14px;
+    right: 6px;
+    bottom: 6px;
+  }
+  
+  .show {
+    margin-top: 90px;
+    padding: 8px;
+    gap: 10px;
+  }
+  
+  .notice-title {
+    font-size: 14px;
+  }
+  
+  .notice-brief {
+    font-size: 12px;
+  }
+  
+  .chart-container {
+    height: 240px;
+  }
+}
+
+@media (max-width: 320px) {
+  .image-container {
+    height: 220px;
+  }
+  
+  .cards-nav {
+    left: 5px;
+    right: 5px;
+    top: 5px;
+  }
+  
+  .cards-row {
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  
+  .nav-card {
+    width: calc((100% - 2 * 4px) / 3);
+    height: 65px;
+    padding: 5px;
+  }
+  
+  .card-icon {
+    font-size: 16px;
+  }
+  
+  .card-text {
+    font-size: 10px;
+  }
+  
+  .show {
+    margin-top: 80px;
+  }
+  
+  .chart-container {
+    height: 220px;
+  }
+
 }
 </style>

@@ -8,11 +8,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import axios from 'axios'
 import * as echarts from 'echarts'
 
-// 关键修改：开发环境下同步加载Mock（确保在所有请求前初始化）
-if (process.env.NODE_ENV === 'development') {
-    // 用同步import替代动态import，保证Mock优先初始化
-    import('./Mock/index.js')
-}
+import('./Mock/index.js')
 
 // 开发环境下禁用缓存（保持不变）
 if (process.env.NODE_ENV === 'development') {

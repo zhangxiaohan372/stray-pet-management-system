@@ -3,9 +3,6 @@
     <div class="header">
     <header class="navbar">
       <div class="logo">爱宠管理系统</div>
-      <nav class="search">
-        <input type="text" placeholder="请输入您要查找的内容" /><el-icon><Search /></el-icon>
-      </nav>
     </header>
 
     </div>
